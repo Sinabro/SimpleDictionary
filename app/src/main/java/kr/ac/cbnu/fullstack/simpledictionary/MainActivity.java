@@ -1,7 +1,5 @@
 package kr.ac.cbnu.fullstack.simpledictionary;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,11 +13,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ViewFlipper;
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    Toolbar toolbar;
+    FloatingActionButton fab;
+    DrawerLayout drawer;
+    ActionBarDrawerToggle toggle;
+    NavigationView navigationView;
+
+    android.support.v4.app.Fragment fragment;
+    android.support.v4.app.FragmentTransaction ft;
+    String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +35,39 @@ public class MainActivity extends AppCompatActivity
 
         startActivity(new Intent(getApplicationContext(), SplashActivity.class));
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        initView();
+        initModel();
+        initListener();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        // 첫 Fragment를 FindWord로 띄우기
+        fragment = new FindWordFragment();
+        ft.replace(R.id.content, fragment).commit();
+    }
+
+    private void initModel() {
+
+        fragment = null;
+        title = getString(R.string.app_name);
+        ft = getSupportFragmentManager().beginTransaction();
+    }
+
+    private void initView() {
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+
+        setSupportActionBar(toolbar);
+        toggle.syncState();
+    }
+
+    private void initListener() {
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -40,13 +76,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -87,9 +116,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
-        android.support.v4.app.Fragment fragment = null;
-        String title = getString(R.string.app_name);
-
         int id = item.getItemId();
 
         if (id == R.id.nav_findword) {
@@ -110,7 +136,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (fragment != null) {
-            android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content, fragment);
             ft.commit();
         }
@@ -120,7 +145,6 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(title);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
