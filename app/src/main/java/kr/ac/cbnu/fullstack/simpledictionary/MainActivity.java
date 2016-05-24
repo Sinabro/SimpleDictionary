@@ -92,20 +92,21 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_findword) {
             fragment = new FindWordFragment();
-            title  = "단어 찾기";
+            title = "검색";
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
+        } else if (id == R.id.nav_vocabulary) {
+            fragment = new VocaFragment();
+            title = "단어장";
+        } else if (id == R.id.nav_wordgame) {
+            title = "학습 게임";
+        } else if (id == R.id.nav_setting) {
+            fragment = new SettingFragment();
+            title = "설정";
         } else if (id == R.id.nav_send) {
-
+            fragment = new SendFragment();
+            title = "내보내기";
         }
 
         if (fragment != null) {
