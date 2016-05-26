@@ -39,6 +39,13 @@ public class MainActivity extends AppCompatActivity
         initModel();
         initListener();
 
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(this);
+
         // 첫 Fragment를 FindWord로 띄우기
         fragment = new FindWordFragment();
         ft.replace(R.id.content, fragment).commit();
@@ -56,14 +63,13 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+
 
         setSupportActionBar(toolbar);
-        toggle.syncState();
+
     }
 
     private void initListener() {
@@ -75,8 +81,6 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -117,6 +121,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         int id = item.getItemId();
+
+        // 현재 프래그먼트와 같을 경우 앱이 죽는 버그 존재
 
         if (id == R.id.nav_findword) {
             fragment = new FindWordFragment();
