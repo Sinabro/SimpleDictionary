@@ -66,10 +66,7 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-
-
         setSupportActionBar(toolbar);
-
     }
 
     private void initListener() {
@@ -121,6 +118,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         int id = item.getItemId();
+        ft = getSupportFragmentManager().beginTransaction();
 
         // 현재 프래그먼트와 같을 경우 앱이 죽는 버그 존재
 
@@ -143,6 +141,7 @@ public class MainActivity extends AppCompatActivity
 
         if (fragment != null) {
             ft.replace(R.id.content, fragment);
+            ft.addToBackStack(null);
             ft.commit();
         }
 
