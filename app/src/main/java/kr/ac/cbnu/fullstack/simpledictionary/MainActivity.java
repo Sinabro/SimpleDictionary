@@ -18,6 +18,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private BackPressCloseHandler backPressCloseHandler;
     Toolbar toolbar;
     FloatingActionButton fab;
     DrawerLayout drawer;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity
 
     private void initModel() {
 
+        backPressCloseHandler = new BackPressCloseHandler(this);
         fragment = null;
         title = getString(R.string.app_name);
         ft = getSupportFragmentManager().beginTransaction();
@@ -86,7 +88,8 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            backPressCloseHandler.onBackPressed();
         }
     }
 
@@ -120,8 +123,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         ft = getSupportFragmentManager().beginTransaction();
 
-        // 현재 프래그먼트와 같을 경우 앱이 죽는 버그 존재
-
         if (id == R.id.nav_findword) {
             fragment = new FindWordFragment();
             title = "검색";
@@ -141,7 +142,6 @@ public class MainActivity extends AppCompatActivity
 
         if (fragment != null) {
             ft.replace(R.id.content, fragment);
-            ft.addToBackStack(null);
             ft.commit();
         }
 

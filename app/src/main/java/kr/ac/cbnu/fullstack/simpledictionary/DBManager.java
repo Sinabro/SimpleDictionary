@@ -34,26 +34,6 @@ public class DBManager extends SQLiteOpenHelper {
                 "time TEXT);";
         db.execSQL(sql);
 
-        sql = "CREATE TABLE IF NOT EXISTS app_info(" +
-                "app_id TEXT PRIMARY KEY UNIQUE, " +
-                "app_name TEXT, " +
-                "user_nick TEXT, " +
-                "check_registration INTEGER);"; // boolean처럼 사용할 것. 앱 등록 여부.
-        db.execSQL(sql);
-
-        sql = "CREATE TABLE IF NOT EXISTS chat_info(" +
-                "channel_id TEXT PRIMARY KEY UNIQUE, " +
-                "public_onoff TEXT, " +
-                "channel_limit INTEGER, " +
-                "channel_cate TEXT, " +
-                "app_id TEXT, " +
-                "channel_name TEXT, " +
-                "chief_id TEXT, " +
-                "user_color TEXT," +
-                "check_favorite INTEGER);";
-
-        db.execSQL(sql);
-
         Log.e("DBManager", "onCreate");
     }
 
