@@ -38,22 +38,17 @@ public class SearchData {
     }
 
     public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
+        return ++count;
     }
 
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
+    public void setDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
         Date tempDate = new Date();
-        date = dateFormat.format(tempDate);
-
-        this.date = date;
+        this.date = dateFormat.format(tempDate);
     }
+
 }
