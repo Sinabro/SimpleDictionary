@@ -37,8 +37,11 @@ public class SearchData {
         this.mean = mean;
     }
 
+    public void setCount() {
+        count++;
+    }
     public int getCount() {
-        return ++count;
+        return count;
     }
 
     public String getDate() {

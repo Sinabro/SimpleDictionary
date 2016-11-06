@@ -18,9 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class FindWordFragment extends Fragment {
 
@@ -91,6 +89,20 @@ public class FindWordFragment extends Fragment {
                 data.setMean("");
                 data.setDate();
 
+                for (int i = 0; i < source.size(); i++) {
+                    // 기존에 검색된 결과라면 있는 결과를 보여줌
+                    if ((data.getWord().equals(source.get(i).getWord()) && source.get(i).getMean() != null)) {
+                        source.get(i).setCount();
+                        source.get(i).getCount();
+                        source.add(0, source.get(i));
+                        source.remove(i + 1);
+                        searchAdapter.notifyDataSetChanged();
+                        editText_word.setText("");
+
+                        return;
+                    }
+                }
+
                 // Daum Dictionary에서 단어 뜻 가져오기
                 AsyncTask<String, Void, String> mTask = new AsyncTask<String, Void, String>() {
                     @Override
@@ -98,7 +110,7 @@ public class FindWordFragment extends Fragment {
 
                         final String DAUM_DICTIONARY_URL = "http://small.dic.daum.net/search.do?q=";
 
-                        final String PARSING_TAG1 = "<ul class=\"list_search\" >";
+                        final String PARSING_TAG1 = "<ul class=\"list_search\">";
                         final String PARSING_TAG2 = "</ul>";
 
                         String regex1 = "\\<.*?\\>";
@@ -106,10 +118,9 @@ public class FindWordFragment extends Fragment {
 
                         URL url = null;
                         String response = "";
-                        Log.e("Parsing_tag1 : ", PARSING_TAG1);
-                        Log.e("Parsing_tag2 : ", PARSING_TAG2);
+
                         try {
-                            url = new URL(DAUM_DICTIONARY_URL + data.getWord());
+                            url = new URL(DAUM_DICTIONARY_URL + data.getWord() + "&dic=eng");
 
                             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                             httpURLConnection.setReadTimeout(10000 /* milliseconds */);
@@ -117,13 +128,7 @@ public class FindWordFragment extends Fragment {
 
                             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
                             while ((response = bufferedReader.readLine()) != null) {
-                                Log.e("response : ", response);
                                 if (response.contains(PARSING_TAG1)) {
-                                    if(response.contains(PARSING_TAG2)) {
-                                        data.setMean(response);
-                                        Log.e("data.mean : ", response);
-                                        break;
-                                    }
                                     while (!response.contains(PARSING_TAG2)) {
                                         data.setMean(data.getMean() + response);
                                         Log.e("data.mean : ", response);
