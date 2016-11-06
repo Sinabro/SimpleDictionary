@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,17 +130,16 @@ public class FindWordFragment extends Fragment {
                                 if (response.contains(PARSING_TAG1)) {
                                     while (!response.contains(PARSING_TAG2)) {
                                         data.setMean(data.getMean() + response);
-                                        Log.e("data.mean : ", response);
                                         response = bufferedReader.readLine();
                                     }
-                                    Log.e("data.mean : ", response);
+                                    //Log.e("data.mean : ", response);
+
+                                    data.setMean(data.getMean().replaceAll(regex1, ""));
+                                    data.setMean(data.getMean().replaceAll(regex2, ""));
+                                    data.setMean(data.getMean().replaceAll("\t", ""));
                                     break;
                                 }
                             }
-
-                            data.setMean(data.getMean().replaceAll(regex1, ""));
-                            data.setMean(data.getMean().replaceAll(regex2, ""));
-                            data.setMean(data.getMean().replaceAll("\t", ""));
 
                         } catch (IOException e) {
                         }
@@ -151,23 +149,16 @@ public class FindWordFragment extends Fragment {
                     @Override
                     protected void onPostExecute(String result) {
                         super.onPreExecute();
-                        for (int i = 0; i < source.size(); i++) {
-                            // load된 데이터에 mean이 존재하지 않을 때 추가
-                            if ((source.get(i).getWord().equals(data.getWord()))) {
-                                source.get(i).getCount();
-                                source.get(i).setMean(data.getMean());
-                                source.add(0, source.get(i));
-                                source.remove(i + 1); // 기존 listview에 있던 data 삭제
-                                searchAdapter.notifyDataSetChanged();
-                                editText_word.setText("");
-                                return;
-                            }
-                        }
-
                         // 처음 검색한 단어일 경우 listview에 추가
-                        source.add(0, data);
-                        searchAdapter.notifyDataSetChanged();
-                        editText_word.setText("");
+                        if(data.getMean() == "") {
+                            Toast.makeText(getActivity(), data.getWord() + "의 뜻을 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
+                            editText_word.setText("");
+                        }
+                        else {
+                            source.add(0, data);
+                            searchAdapter.notifyDataSetChanged();
+                            editText_word.setText("");
+                        }
                     }
                 };
 
