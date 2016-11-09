@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,7 @@ public class FindWordFragment extends Fragment {
     View view;
     SearchData data;
     EditText editText_word;
-    Button button_search, button_load, button_save, button_clear;
+    Button button_search;
     ListView listView_result;
     ArrayList<SearchData> source;
     SearchAdapter searchAdapter = null;
@@ -56,12 +55,12 @@ public class FindWordFragment extends Fragment {
         listView_result = (ListView) view.findViewById(R.id.listView_result);
         editText_word = (EditText) view.findViewById(R.id.editText_word);
         button_search = (Button) view.findViewById(R.id.button_search);
-
-        button_load = (Button) view.findViewById(R.id.button_load);
-        button_save = (Button) view.findViewById(R.id.button_save);
-        button_clear = (Button) view.findViewById(R.id.button_clear);
         /*
-
+        editText_word = (EditText) findViewById(R.id.editText_word);
+        button_search = (Button) findViewById(R.id.button_search);
+        button_load = (Button) findViewById(R.id.button_load);
+        button_save = (Button) findViewById(R.id.button_save);
+        button_clear = (Button) findViewById(R.id.button_clear);
         radioGroup_align = (RadioGroup) findViewById(R.id.radioGroup_align);
         listView_result = (ListView) findViewById(R.id.listView_result);
 
@@ -108,12 +107,10 @@ public class FindWordFragment extends Fragment {
                     @Override
                     protected String doInBackground(String... params) {
 
-
                         final String DAUM_DICTIONARY_URL = "http://small.dic.daum.net/search.do?q=";
 
                         final String PARSING_TAG1 = "<ul class=\"list_search\">";
                         final String PARSING_TAG2 = "</ul>";
-                        final String PARSING_TAG3 = "<ul class=\"list_mean\">";
 
                         String regex1 = "\\<.*?\\>";
                         String regex2 = "<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>";
@@ -122,47 +119,20 @@ public class FindWordFragment extends Fragment {
                         String response = "";
 
                         try {
-                            url = new URL(DAUM_DICTIONARY_URL + data.getWord() + "&dic=eng");
+                            url = new URL(DAUM_DICTIONARY_URL + data.getWord());
 
                             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                             httpURLConnection.setReadTimeout(10000 /* milliseconds */);
                             httpURLConnection.setConnectTimeout(15000 /* milliseconds */);
 
-                            int status = httpURLConnection.getResponseCode();
-                            boolean redirect = false;
-
-                            if (status != HttpURLConnection.HTTP_OK) {
-                                if (status == HttpURLConnection.HTTP_MOVED_TEMP
-                                        || status == HttpURLConnection.HTTP_MOVED_PERM
-                                        || status == HttpURLConnection.HTTP_SEE_OTHER)
-                                    redirect = true;
-                            }
-
-                            if (redirect) {
-                                // get redirect url from "location" header field
-                                String newUrl = httpURLConnection.getHeaderField("Location");
-
-                                // get the cookie if need, for login
-                                String cookies = httpURLConnection.getHeaderField("Set-Cookie");
-
-                                // open the new connnection again
-                                httpURLConnection = (HttpURLConnection) new URL(newUrl).openConnection();
-                                httpURLConnection.setRequestProperty("Cookie", cookies);
-                                httpURLConnection.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
-                                httpURLConnection.addRequestProperty("User-Agent", "Mozilla");
-                                httpURLConnection.addRequestProperty("Referer", "google.com");
-
-                                // System.out.println("Redirect to URL : " + newUrl);
-                            }
-
                             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
                             while ((response = bufferedReader.readLine()) != null) {
-                                Log.e("response : ", response);
-                                if (response.contains(PARSING_TAG1) || response.contains(PARSING_TAG3)) {
+                                if (response.contains(PARSING_TAG1)) {
                                     while (!response.contains(PARSING_TAG2)) {
                                         data.setMean(data.getMean() + response);
                                         response = bufferedReader.readLine();
                                     }
+
                                     data.setMean(data.getMean().replaceAll(regex1, ""));
                                     data.setMean(data.getMean().replaceAll(regex2, ""));
                                     data.setMean(data.getMean().replaceAll("\t", ""));
